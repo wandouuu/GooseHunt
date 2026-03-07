@@ -18,7 +18,7 @@ class Game:
         self.add_player(player)
         
 
-    def add_player(self, id, name, lat, lon):
+    def add_player(self, player_id, player_name, lat, lon):
         if(( not self.game_started) and (self.players.len() < self.max_players)):
             player = Player(id, name, lat, lon)
             self.players.append(player)
@@ -43,7 +43,6 @@ class Game:
         return shrinkZones; 
 
     def move_position_data(self, player):
-        
         for i in range(4, 0, -1):
             player.lat[i] = player.lat[i - 1]
             player.lon[i] = player.lon[i - 1]
