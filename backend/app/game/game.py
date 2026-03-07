@@ -9,7 +9,6 @@ class Game:
         self.game_id = game_id
         self.center_lat = center_lat
         self.center_lon = center_lon
-        
         self.players = {player_id: Player(player_id, player_name, center_lat, center_lon)}
         self.game_started = False
         self.max_players = 200
@@ -40,14 +39,37 @@ class Game:
         shrinkZones=[radius +change*0.95, radius + change*0.9, radius + change*0.85, radius + change*0.8, radius + change*0.75, radius + change*0.7, radius + change*0.65, radius + change*0.6, radius + change*0.55, radius + change*0.5, radius + change*0.45, radius + change*0.4, radius + change*0.35, radius + change*0.3, radius + change*0.25, radius + change*0.2, radius + change*0.15, radius + change*0.1, radius + change*0.05, radius]
         return shrinkZones; 
 
-    def move_position_data(self, player):
+    def connect(self, player_id, websocket):
+        # attribute to each player their own websocket for broadcast
+        self.players[player_id].websocket = websocket
+    
+    def disconnect(self, player_id):
+        # remove for each player their own websocket for broadcast
+        self.players[player_id].websocket = None
+
+    def update_position(self, player_id, lat, lon):
+        player = self.players[player_id]
+
         for i in range(4, 0, -1):
             player.lat[i] = player.lat[i - 1]
             player.lon[i] = player.lon[i - 1]
 
-        
 
+        player.lat[0] = lat
+        player.lon[0] = lon
 
+    async def broadcast(self, message: dict):
+        # For each player broadcast to everyone
+        for player in self.players.values():
+            # Send a WebSocket
+            if player.websocket:
+                await player.websocket.send_json(message)
+
+    async def send_to_player(self, player_id, message: dict):
+        # Send only to the player with specific player_id
+        player = self.players[player_id]
+        if player.websocket:
+            await player.websocket.send_json(message)
 
     def start_game(self):
         assert(self.num_players > 1)
