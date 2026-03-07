@@ -68,8 +68,6 @@ class Game:
         total_hiders=0
         for player in self.players:
             total_hiders += player.role
-        
-    
 
         time_shrink= 360 # 6 minutes until shrink starts
         while (total_hiders > 0):
@@ -83,6 +81,7 @@ class Game:
                 
                 for player in self.players:
                     if player.role == 1:
+                        
                         for i in range(5):
                             if spatial_logic.calculate_distance(player.lat[i], player.lon[i], self.center_lat, self.center_lon) > closing_circle_radius:
                                 #player is outside the boundary and is eliminated
