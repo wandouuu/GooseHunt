@@ -1,11 +1,5 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI
+from app.api.websockets import game_websocket
+from app.api.routes import router
 
-app = FastAPI()
 
-@app.get("/")
-async def get():
-    return HTMLResponse(html)
-
-@app.websocket("/location/update_position/{user_id}")
-async def update_position(websocket: WebSocket):
-    
