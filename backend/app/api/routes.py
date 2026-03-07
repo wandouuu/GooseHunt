@@ -13,7 +13,14 @@ async def create_game():
 
 @router.post("/join_game/{game_id}")
 async def join_game(game_id: str):
-    pass
+    if game_id in game_manager.active_games:
+        game_manager.active_games[game_id].join_game()
+    else:
+        raise HTTPException(status_code = 404, detail="Game not found")
 
-
-
+@router.post("/leave_game/{game_id}")
+async def leave_game(game_id: str):
+    if game_id in game_manager.active_games:
+        game_manager.active_games[game_id].leave_game()
+    else:
+        raise HTTPException(status_code = 404, detail="Game not found")
