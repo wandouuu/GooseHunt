@@ -24,8 +24,6 @@ async def create_game(request: GameRequest):
 
     game_id = game_manager.create_game(player_id=player_id,
                                        player_name=request.player_name,
-                                       lat=request.lat,
-                                       lon=request.lon,
                                        center_lat=request.center_lat,
                                        center_lon=request.center_lon)
     

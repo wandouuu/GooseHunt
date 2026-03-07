@@ -4,28 +4,21 @@ from player import Player
 import time 
 import spatial_logic
 
-
-
-
-
 class Game:
     def __init__(self, game_id, center_lat, center_lon, player_id, player_name):
         self.game_id = game_id
         self.center_lat = center_lat
         self.center_lon = center_lon
-        
-        self.players = []
+        self.players = {player_id: Player(player_id, player_name, center_lat, center_lon)}
         self.game_started = False
         self.max_players = 200
         self.radius = 400
         self.current_radius = 400
         self.next_radius= 300
         self.zone_changing =False
-        player = Player(player_id, player_name, center_lat, center_lon)
-        self.add_player(player)
         
 
-    def add_player(self, id, name, lat, lon):
+    def add_player(self, player_id, player_name, lat, lon):
         if(( not self.game_started) and (self.players.len() < self.max_players)):
             player = Player(id, name, lat, lon)
             self.players.append(player)
@@ -42,67 +35,66 @@ class Game:
             else:
                 # role = 1 for hider
                 player.role = 1
+
     def shrink_zone(self):
         self.radius = self.radius * 0.75
         self.next_radius = self.radius * 0.75
 
 
     def send_zone_changing(self):# evry 5 seconds send the next radius to the front end to update the zone
-        if self.zone_changing==True:
-            self.current_radius=self.current_radius-(self.radius-self.next_radius)/12 
+        if self.zone_changing:
+            self.current_radius = self.current_radius-(self.radius-self.next_radius)/12 
             return self.current_radius
-        else: 
-            return self.radius
+        
+        return self.radius
     
 
-    def move_position_data(player):
-        Player.lat[4]=Player.lat[3]
-        Player.lon[4]=Player.lon[3]
+    def connect(self, player_id, websocket):
+        # attribute to each player their own websocket for broadcast
+        self.players[player_id].websocket = websocket
+    
+    def disconnect(self, player_id):
+        # remove for each player their own websocket for broadcast
+        self.players[player_id].websocket = None
 
-        Player.lat[3]=Player.lat[2]
-        Player.lon[3]=Player.lon[2]
+    def update_position(self, player_id, lat, lon):
+        player = self.players[player_id]
 
-        Player.lat[2]=Player.lat[1]
-        Player.lon[2]=Player.lon[1]
+        for i in range(4, 0, -1):
+            player.lat[i] = player.lat[i - 1]
+            player.lon[i] = player.lon[i - 1]
 
-        Player.lat[1]=Player.lat[0]
-        Player.lon[1]=Player.lon[0]
 
+        player.lat[0] = lat
+        player.lon[0] = lon
+
+    async def broadcast(self, message: dict):
+        # For each player broadcast to everyone
+        for player in self.players.values():
+            # Send a WebSocket
+            if player.websocket:
+                await player.websocket.send_json(message)
+
+    async def send_to_player(self, player_id, message: dict):
+        # Send only to the player with specific player_id
+        player = self.players[player_id]
+        if player.websocket:
+            await player.websocket.send_json(message)
+
+    async def start_game(self):
         
+        if len(self.players) < 2:
+            return
+        
+        self.game_started = True
 
-
-
-    def start_game(self):
-        assert(self.num_players > 1)
         self.assign_roles()
-        total_hiders=0
-        for player in self.players:
-            total_hiders += player.role
 
-        time_shrink= 360 # 6 minutes until shrink starts
-        while (total_hiders > 1):
-            shrink = self.shrink_zone(self.radius)
-            
-            closing_circle_radius = shrink[19]
-            for i in range(360):
-                for player in self.players:
-                    self.move_position_data(player)
-                #message()
-                
-                for player in self.players:
-                    if player.role == 1:
-
-                        Out_of_zone_count=0 #counter to track how many times a player is outside the zone, if they are outside the zone for 5 seconds straight they are eliminated
-                        for i in range(5):
-                            if spatial_logic.is_outside_boundary(player.lat[i], player.lon[i], self.center_lat, self.center_lon,self.radius):
-                                Out_of_zone_count += 1
-                            else: break
-                        if (Out_of_zone_count == 5):
-                            player.role = 0
-                            total_hiders -= 1
-                
-
-        # game ends send messege to winner and game over screen to seekers
+        await self.broadcast({"query": "game_started",
+                              "center_lat": self.center_lat,
+                              "center_lon": self.center_lon,
+                              "radius": self.radius,
+                              "roles": {pid: p.role for pid, p in self.players.items()}})
 
 
                     

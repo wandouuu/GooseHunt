@@ -5,12 +5,12 @@ class GameManager:
     def __init__(self):
         self.active_games = {}
 
-    def create_game(self):
+    def create_game(self, player_id, player_name, center_lat, center_lon):
         if self.active_games:
             return None  # A game already exists
 
         game_id = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
-        self.active_games[game_id] = Game(game_id)
+        self.active_games[game_id] = Game(game_id, center_lat, center_lon, player_id, player_name)
         return game_id
     
     def get_game(self, game_id: str):
