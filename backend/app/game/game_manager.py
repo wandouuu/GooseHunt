@@ -5,7 +5,7 @@ class GameManager:
     def __init__(self):
         self.active_games = {}
 
-    def create_game(self):
+    def create_game(self, player_id, player_nam, lat, lon, center_lat, center_lon):
         if self.active_games:
             return None  # A game already exists
 
