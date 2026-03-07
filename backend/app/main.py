@@ -1,9 +1,7 @@
 from fastapi import FastAPI
-from app.api.websockets import game_websocket
-from app.api.routes import router
+from app.api.websockets import router as ws_router
+from app.api.routes import router as api_router
 
 app = FastAPI()
 app.include_router(ws_router)
 app.include_router(api_router)
-
-
