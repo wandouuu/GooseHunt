@@ -18,5 +18,15 @@ async def game_websocket(websocket: WebSocket, game_id: str, player_id: str):
         await websocket.close(code=4001, reason="Player not in game")
         return
 
+    game.connect(player_id, websocket)
 
-    if player_id not in 
+    try:
+        while True:
+            data = await websocket.receive_json()
+
+            match data["query"]:
+                case "":
+                    pass
+    
+    except WebSocketDisconnect:
+        game.disconnect(player_id)
