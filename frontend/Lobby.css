@@ -1,0 +1,48 @@
+/*body{
+    background-image: url(Gemini_Generated_Image_vnq0srvnq0srvnq0.png);
+    background-position: center;
+    background-size: cover;
+}*/
+
+.btns{
+    display: flex;
+    border-radius: 5px;
+    background-color: rgb(103, 129, 146);
+    color: white;
+    margin: 2px;
+    padding: 10px;
+    font-size: large;
+    text-align: center;
+    font-family: fantasy;
+}
+
+.profile-upload{
+    display: flex;
+    border-radius: 50px;
+    
+}
+
+#display-image{
+  width: 150px;
+  height: 150px;
+  border: 2px solid #ddd;
+  border-radius: 50%; /* Makes it a circle */
+  margin-top: 10px;
+  background-position: center;
+  background-size: cover;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px dashed #678192;/*Represents the drop-zone*/
+}
+
+#display-image:hover{
+    border-color: #4a5d6a ;/*Darkens when you hover*/
+}
+
+.upload-text{
+    font-family:cursive;
+    font-size: small;
+    text-align: center;
+}
