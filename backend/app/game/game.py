@@ -4,17 +4,13 @@ from player import Player
 import time 
 import spatial_logic
 
-
-
-
-
 class Game:
     def __init__(self, game_id, center_lat, center_lon, player_id, player_name):
         self.game_id = game_id
         self.center_lat = center_lat
         self.center_lon = center_lon
         
-        self.players = []
+        self.players = {}
         self.game_started = False
         self.max_players = 200
         self.radius = 400
