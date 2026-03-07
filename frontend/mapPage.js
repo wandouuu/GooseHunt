@@ -1,10 +1,13 @@
 // Initialize map
-const map = L.map('map').setView([43.4723, -80.5449], 14);
+const map = L.map('map').setView([43.47032, -80.54232], 16);
 
 // Add OpenStreetMap tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
+
+
+
 
 let playerMarker;
 
@@ -21,7 +24,7 @@ navigator.geolocation.watchPosition(
         if(!playerMarker) {
             playerMarker = L.marker(latlng);
             playerMarker.addTo(map);
-            map.setView(latlng, 16);
+            map.setView(latlng, 24);
         }
         else{
             playerMarker.setLatLng(latlng);
@@ -36,6 +39,6 @@ navigator.geolocation.watchPosition(
 );
 
 //draws circle
-L.circle([43.4723, -80.5449], {
-    radius: 500
+L.circle([43.47032, -80.54232], {
+    radius: 20
 }).addTo(map);
