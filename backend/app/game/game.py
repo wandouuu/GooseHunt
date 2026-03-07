@@ -18,6 +18,9 @@ class Game:
         self.game_started = False
         self.max_players = 200
         self.radius = 400
+        self.current_radius = 400
+        self.next_radius= 300
+        self.zone_changing =False
         player = Player(player_id, player_name, center_lat, center_lon)
         self.add_player(player)
         
@@ -39,11 +42,18 @@ class Game:
             else:
                 # role = 1 for hider
                 player.role = 1
-    def shrink_zone(radius):
-        change =radius * 0.25 
-        radius = radius * 0.75
-        shrinkZones=[radius +change*0.95, radius + change*0.9, radius + change*0.85, radius + change*0.8, radius + change*0.75, radius + change*0.7, radius + change*0.65, radius + change*0.6, radius + change*0.55, radius + change*0.5, radius + change*0.45, radius + change*0.4, radius + change*0.35, radius + change*0.3, radius + change*0.25, radius + change*0.2, radius + change*0.15, radius + change*0.1, radius + change*0.05, radius]
-        return shrinkZones; 
+    def shrink_zone(self):
+        self.radius = self.radius * 0.75
+        self.next_radius = self.radius * 0.75
+
+
+    def send_zone_changing(self):# evry 5 seconds send the next radius to the front end to update the zone
+        if self.zone_changing==True:
+            self.current_radius=self.current_radius-(self.radius-self.next_radius)/12 
+            return self.current_radius
+        else: 
+            return self.radius
+    
 
     def move_position_data(player):
         Player.lat[4]=Player.lat[3]
