@@ -8,6 +8,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let playerMarker;
 
+
+//constantly updates user's pos
 navigator.geolocation.watchPosition(
     (position) => {
 
@@ -32,3 +34,8 @@ navigator.geolocation.watchPosition(
         enableHighAccuracy: true
     }
 );
+
+//draws circle
+L.circle([43.4723, -80.5449], {
+    radius: 500
+}).addTo(map);
