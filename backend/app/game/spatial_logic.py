@@ -15,4 +15,10 @@ def calculate_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     return distance
 
 def is_outside_boundary(player_lat: float, player_lon: float, center_lat: float, center_lon: float, radius_meters: float) -> bool:
-    
+    # Convert radius in meters to kilometers
+    radius_km = radius_meters / 1000
+    distance = calculate_distance(player_lat, player_lon, center_lat, center_lon)
+    return distance > radius_km
+
+def is_capture(hider_lat: float, hider_lon: float, seeker_lat: float, seeker_lon: float) -> bool:
+    return calculate_distance(hider_lat, hider_lon, seeker_lat, seeker_lon) < 0.01
