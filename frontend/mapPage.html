@@ -10,11 +10,26 @@
 
 <body>
     
-    <div id="map">
-    
+    <div id="map"></div>
+
+    <div id="ui-overlay">
+        <div id="timer">Time Left: 60:00</div>
+
+        <div id="role-box">
+            Role: <span id="player-role">Hider</span>
+        </div>
+
+        <button id="caught-btn">I've Been Caught</button>
+
+        <div id="hiders-left">
+            Hiders Remaining: <span id="hider-count">5</span>
+        </div>
+
+        <div id = "game-id-box">
+            Game Id: <span id = game-id>000000</span>
+        </div>
     </div>
-        <h2>Goose Hunt</h2>
-        <p>Find the hidden geese on the map!</p>
+
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>

@@ -9,14 +9,45 @@ body {
     z-index: 0;
 }
 
-.map-button {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: white;
-  padding: 10px 14px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  font-family: sans-serif;
+#ui-overlay {
+    font-size: large;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+
+    z-index: 1000;
+
+    background: rgba(255,255,255,0.9);
+    padding: 10px;
+    border-radius: 8px;
+    font-family: Arial;
 }
+
+#caught-btn {
+    background-color: #e53935;
+    color: white;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+
+    padding: 10px 10px;
+    border: none;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    transition: all 0.2s ease;
+}
+
+#caught-btn:hover {
+    background-color: #c62828;
+    transform: scale(1.05);
+}
+
+#caught-btn:active {
+    transform: scale(0.95);
+}
+
+
+
