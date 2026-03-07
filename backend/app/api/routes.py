@@ -1,7 +1,12 @@
 from FastAPI import APIRouter, HTTPException
 import app.game.game_manager as game_manager
-router = APIRouter()
+from pydantic import BaseModel
 
+router = APIRouter(prefix="/api")
+
+class PlayerRequest(BaseModel):
+    player_id: str
+    
 @router.post("/create_game")
 async def create_game():
     game_id = game_manager.create_game()
