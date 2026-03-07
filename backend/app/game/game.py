@@ -70,7 +70,7 @@ class Game:
             total_hiders += player.role
 
         time_shrink= 360 # 6 minutes until shrink starts
-        while (total_hiders > 0):
+        while (total_hiders > 1):
             shrink = self.shrink_zone(self.radius)
             
             closing_circle_radius = shrink[19]
@@ -81,12 +81,21 @@ class Game:
                 
                 for player in self.players:
                     if player.role == 1:
-                        
+
+                        Out_of_zone_count=0 #counter to track how many times a player is outside the zone, if they are outside the zone for 5 seconds straight they are eliminated
                         for i in range(5):
-                            if spatial_logic.calculate_distance(player.lat[i], player.lon[i], self.center_lat, self.center_lon) > closing_circle_radius:
-                                #player is outside the boundary and is eliminated
-                                self.players.remove(player)
-                                break
+                            if spatial_logic.is_outside_boundary(player.lat[i], player.lon[i], self.center_lat, self.center_lon,self.radius):
+                                Out_of_zone_count += 1
+                            else: break
+                        if (Out_of_zone_count == 5):
+                            player.role = 0
+                            total_hiders -= 1
+                
+
+        # game ends send messege to winner and game over screen to seekers
+
+
+                    
 
 
 
