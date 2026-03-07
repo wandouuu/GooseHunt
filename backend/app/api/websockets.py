@@ -25,7 +25,9 @@ async def game_websocket(websocket: WebSocket, game_id: str, player_id: str):
             data = await websocket.receive_json()
 
             match data["query"]:
-                case "":
+                case "update_location":
+                    pass
+                case "start_game":
                     pass
     
     except WebSocketDisconnect:
