@@ -3,6 +3,6 @@ class Player:
     def __init__(self, id, name, lat, lon):
         self.id = id
         self.name = name
-        self.lat = lat
-        self.lon = lon
+        self.lat = [lat,0,0,0,0]
+        self.lon = [lon,0,0,0,0]
         self.role = None
