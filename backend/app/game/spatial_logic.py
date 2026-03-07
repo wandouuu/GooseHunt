@@ -21,4 +21,5 @@ def is_outside_boundary(player_lat: float, player_lon: float, center_lat: float,
     return distance > radius_km
 
 def is_capture(hider_lat: float, hider_lon: float, seeker_lat: float, seeker_lon: float) -> bool:
+    # return true if hider and seeker are within 10 meters of each other
     return calculate_distance(hider_lat, hider_lon, seeker_lat, seeker_lon) < 0.01
