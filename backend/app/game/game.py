@@ -35,24 +35,18 @@ class Game:
             else:
                 # role = 1 for hider
                 player.role = 1
+
     def shrink_zone(radius):
         change =radius * 0.25 
         radius = radius * 0.75
         shrinkZones=[radius +change*0.95, radius + change*0.9, radius + change*0.85, radius + change*0.8, radius + change*0.75, radius + change*0.7, radius + change*0.65, radius + change*0.6, radius + change*0.55, radius + change*0.5, radius + change*0.45, radius + change*0.4, radius + change*0.35, radius + change*0.3, radius + change*0.25, radius + change*0.2, radius + change*0.15, radius + change*0.1, radius + change*0.05, radius]
         return shrinkZones; 
 
-    def move_position_data(player):
-        Player.lat[4]=Player.lat[3]
-        Player.lon[4]=Player.lon[3]
-
-        Player.lat[3]=Player.lat[2]
-        Player.lon[3]=Player.lon[2]
-
-        Player.lat[2]=Player.lat[1]
-        Player.lon[2]=Player.lon[1]
-
-        Player.lat[1]=Player.lat[0]
-        Player.lon[1]=Player.lon[0]
+    def move_position_data(self, player):
+        
+        for i in range(4, 0, -1):
+            player.lat[i] = player.lat[i - 1]
+            player.lon[i] = player.lon[i - 1]
 
         
 
