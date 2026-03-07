@@ -22,4 +22,38 @@ image_input.addEventListener("change",function(){
     }
 });
 
+const joinBtn = document.querySelector("#join-game")
+const join_pop_up = document.querySelector("#join-pop-up")
+const close_pop_up = document.querySelector("#cancel")
+const confirm_join =  document.querySelector("#confirm-join")
+
+//open pop-up
+joinBtn.addEventListener("click", () => {
+    join_pop_up.style.display = "flex";
+});
+
+//close pop-up
+close_pop_up.addEventListener("click", () => {
+    join_pop_up.style.display = "none";
+});
+
+//close pop-up method 2
+window.addEventListener("click", (event) =>{
+    if (event.target == join_pop_up){
+        join_pop_up.style.display = "none"
+    }
+});
+
+//when confirm is pressed
+confirm_join.addEventListener("click", () => {
+    const lobbyInput = document.querySelector("#join-id");
+    const idValue = lobbyInput.value; // Use .value, not .ariaValueMax
+    
+    if(idValue) {
+        alert("Entering Lobby: " + idValue);
+    } else {
+        alert("Please enter a Lobby ID!");
+    }
+});
+
 
