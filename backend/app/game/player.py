@@ -1,8 +1,11 @@
 class Player:
     # role = 0 for hider and 1 for seeker
-    def __init__(self, id, name, lat, lon):
-        self.id = id
-        self.name = name
-        self.lat = lat
-        self.lon = lon
+    def __init__(self, player_id, player_name, lat, lon):
+        self.player_id = player_id
+        self.name = player_name
+        self.lat = [lat for i in range(5)]
+        self.lon = [lon for i in range(5)]
         self.role = None
+        self.websocket = None
+
+

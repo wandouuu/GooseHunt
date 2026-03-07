@@ -3,12 +3,12 @@ from app.game.game_manager import game_manager
 
 router = APIRouter(prefix = "/ws")
 
-@router.get("/game/{game_id}/{player_id}")
+@router.websocket("/game/{game_id}/{player_id}")
 async def game_websocket(websocket: WebSocket, game_id: str, player_id: str):
 
     await websocket.accept()
 
-    game = game_manager.get(game_id)
+    game = game_manager.get_game(game_id)
 
     if not game:
         await websocket.close(code=4004, reason="Game not found")
@@ -25,7 +25,9 @@ async def game_websocket(websocket: WebSocket, game_id: str, player_id: str):
             data = await websocket.receive_json()
 
             match data["query"]:
-                case "":
+                case "update_location":
+                    pass
+                case "start_game":
                     pass
     
     except WebSocketDisconnect:

@@ -24,8 +24,6 @@ async def create_game(request: GameRequest):
 
     game_id = game_manager.create_game(player_id=player_id,
                                        player_name=request.player_name,
-                                       lat=request.lat,
-                                       lon=request.lon,
                                        center_lat=request.center_lat,
                                        center_lon=request.center_lon)
     
@@ -55,5 +53,12 @@ async def leave_game(game_id: str, player_id: str):
     if game_id in game_manager.active_games:
         game_manager.active_games[game_id].remove_player(player_id=player_id)
         return {"status": "left"}
+    else:
+        raise HTTPException(status_code=404, detail="Game not found")
+
+@router.post("/game_state/caught")
+async def caught(game_id: str, player_id: str):
+    if game_id in game_manager.active_games:
+        return {"query": "game_state", "game_state": "game_over", "player_caught": player_id}
     else:
         raise HTTPException(status_code=404, detail="Game not found")
