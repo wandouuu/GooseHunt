@@ -3,6 +3,9 @@ class Player:
     def __init__(self, player_id, player_name, lat, lon):
         self.player_id = player_id
         self.name = player_name
-        self.lat = [lat,0,0,0,0]
-        self.lon = [lon,0,0,0,0]
+        self.lat = [lat for i in range(5)]
+        self.lon = [lon for i in range(5)]
         self.role = None
+        self.websocket = None
+
+
