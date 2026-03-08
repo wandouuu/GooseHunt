@@ -1,4 +1,4 @@
-// const socket = new WebSocket();
+const socket = new WebSocket(`ws://localhost:8000/ws/game/${GameId}/${PlayerId}`);
 
 
 // THIS NEEDS VARS:
@@ -69,21 +69,21 @@ navigator.geolocation.watchPosition(
         const lon = position.coords.longitude;
 
         const latlng = [lat, lon];
-        // let now = Date.now();
+        let now = Date.now();
 
-        //no more than once a second, send new position through websocket
-        // if(now - lastPosUpdate >= 1000){
-        //     const data = {
-        //         player_id: playerId,
-        //         game_id: gameId,
-        //         latitude: lat,
-        //         longitude: lon
-        //     };
+        // no more than once a second, send new position through websocket
+        if(now - lastPosUpdate >= 1000){
+            
+            const data = {
+                query: "update_location",
+                lat: lat,
+                lon: lon
+            };
 
-        //     socket.send(JSON.stringify(data));
+            socket.send(JSON.stringify(data));
 
-        //     lastPosUpdate = now;
-        // }
+            lastPosUpdate = now;
+        }
     
         if(!playerMarker) {
             playerMarker = L.marker(latlng);
@@ -106,39 +106,41 @@ navigator.geolocation.watchPosition(
 // until the game ends
 let lastRadUpdate = 0;
 
-// socket.onmessage = (event) => {
-//     const data = JSON.parse(event.data);
+socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
 
-//     if(data.type === "radius_update"){
-//         circle.setRadius(data.radius);
-//     }
-//     else if(data.type === "role_update"){
-//         document.getElementById("player-role").textContent = data.role;
-//         if(data.role == "Seeker"){
-//             document.getElementById("caught-btn").style.display = "none";
-//         }
-//     }
+    if(data.query === "radius_update"){
+        circle.setRadius(data.radius);
+    }
+    else if(data.query === "role_update"){
+        document.getElementById("player-role").textContent = data.role;
+        if(data.query == "Seeker"){
+            document.getElementById("caught-btn").style.display = "none";
+        }
+    }
 
-// }
+}
 
 
 document.getElementById("caught-btn").addEventListener("click", async () => {
-    // try{
-        // const response = await fetch("INSERT API ROUTE HERE", {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": ""
-        //     },
-        //     body: JSON.stringify({
-        //         player_id: playerId
-        //     })
-            
-        // });
+    try{
+        const response = await fetch(`http://localhost:8000/game_state/caught?game_id=${GameId}&player_id=${PlayerId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log("Caught response:", data);
+        
         document.getElementById("caught-btn").style.display = "none";
         
-        // const data = await response.json();
-        
-    // }catch (error) {
-    //     console.error("Error sending caught status:", error);
-    // }
+    }catch (error) {
+        console.error("Error sending caught status:", error);
+    }
 });
