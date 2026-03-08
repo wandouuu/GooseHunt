@@ -3,12 +3,8 @@ const socket = new WebSocket(`ws://localhost:8000/ws/game/${GameId}/${PlayerId}`
 
 // THIS NEEDS VARS:
 // gameState = true for game still going, false for game over
-// playerId
-// gameId
-//centerLat
-// centerLon
-//role
 
+let role;
 
 
 // Initialize map
