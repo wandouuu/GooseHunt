@@ -22,10 +22,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 
-//draws circle
-let circle = L.circle([centerLat, centerLon], {
-    radius: 400
-}).addTo(map);
+
 
 
 function updateTimer(seconds) {
