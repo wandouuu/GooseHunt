@@ -120,20 +120,36 @@ class Game:
     def timer(self):
         init_time = time.monotonic()
         zone_change_time= 360
+        multiplier = 1
+
         while True:
             time.sleep(1)
             elapsed_time = time.monotonic() - init_time
             time_left = zone_change_time - elapsed_time
+
+            if time_left % 5 == 0:
+                self.broadcast({"query": "zone_changing", "next_radius": self.send_zone_changing})
+            
             self.update_time(time_left)
+
             if time_left <= 0:
+                multiplier += 1
                 self.zone_changing = True
                 time_left= 60
+
                 while time_left > 0:
+
                     time.sleep(1)
                     self.update_time(self, time_left+300)
+
+                    if time_left % 5 == 0:
+                        self.broadcast({"query": "zone_changing", "next_radius": self.send_zone_changing})
                     time_left -= 1
+
                 self.zone_changing = False
                 time_left= 300
+                zone_change_time*= multiplier
+
                 self.shrink_zone()
 
     def update_time(self, seconds):
