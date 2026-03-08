@@ -1,5 +1,5 @@
-from FastAPI import APIRouter, HTTPException
-import app.game.game_manager as game_manager
+from fastapi import APIRouter, HTTPException
+from app.game.game_manager import game_manager
 from pydantic import BaseModel
 import uuid
 
@@ -17,7 +17,7 @@ class GameRequest(PlayerRequest):
 
 @router.post("/create_game")
 async def create_game(request: GameRequest):
-    if request.player_name is None:
+    if not request.player_name:
         raise HTTPException(status_code=400, detail="Player name is required")
     
     player_id = str(uuid.uuid4())
@@ -51,8 +51,8 @@ async def join_game(game_id: str, request: PlayerRequest):
 @router.post("/leave_game/{game_id}/{player_id}")
 async def leave_game(game_id: str, player_id: str):
     if game_id in game_manager.active_games:
-        game_manager.active_games[game_id].remove_player(player_id=player_id)
-        return {"status": "left"}
+        game_manager.active_games[game_id].disconnect(player_id=player_id)
+        return {"query": "status", "status": "left"}
     else:
         raise HTTPException(status_code=404, detail="Game not found")
 

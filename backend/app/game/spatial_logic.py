@@ -2,7 +2,7 @@ import math
 
 def calculate_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     # Calculates the distance between two points on the Earth using the Haversine formula
-    EARTH_RADIUS = 6371.01  # Earth's radius in kilometers
+    EARTH_RADIUS = 6371.01*1000 # Earth's radius in meters
 
     # requires difference between lat and lon in radians
     delta_lat = math.radians(lat2 - lat1)
@@ -15,7 +15,6 @@ def calculate_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     return distance
 
 def is_outside_boundary(player_lat: float, player_lon: float, center_lat: float, center_lon: float, radius_meters: float) -> bool:
-    # Convert radius in meters to kilometers
     distance = calculate_distance(player_lat, player_lon, center_lat, center_lon)
     return distance > radius_meters    
 
