@@ -44,7 +44,9 @@ async def join_game(game_id: str, request: PlayerRequest):
                                                       lat=request.lat,
                                                       lon=request.lon)
         # returns player_id
-        return {"player_id": player_id}
+        return {"player_id": player_id,
+                "game_id": game_id}
+    
     else:
         raise HTTPException(status_code=404, detail="Game not found")
 

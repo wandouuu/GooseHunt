@@ -23,7 +23,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 //draws circle
 
 // REPLACE WITH centerLat, centerLon
-let circle = L.circle([43.47032, -80.54232], {
+let circle = L.circle([centerLat, centerLon], {
 radius: 400
 }).addTo(map);
 
@@ -45,6 +45,7 @@ function updateTimer(seconds){
     }
 }
 
+//set to the amount of time for a game in seconds, will update every second
 let timeLeft = 20;
 
 
@@ -143,4 +144,6 @@ document.getElementById("caught-btn").addEventListener("click", async () => {
     }catch (error) {
         console.error("Error sending caught status:", error);
     }
+
+    
 });
