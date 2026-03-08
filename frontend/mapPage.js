@@ -107,7 +107,7 @@ socket.onmessage = (event) => {
         circle.setRadius(data.next_radius);
     } else if (data.query === "game_state") {
         if (data.game_state === "game_over") {
-
+            window.location.href = "GameOver.html";
         } else {
 
         }
