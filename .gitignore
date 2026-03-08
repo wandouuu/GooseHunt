@@ -1,4 +1,2 @@
 .env
-./backend/app/__pycache__
-./backend/app/api/__pycache__
-./backend/app/game/__pycache__
+**/__pycache__/
