@@ -20,7 +20,7 @@ body {
     justify-content: center; /* Vertical Center */
     align-items: center;    /* Horizontal Center */
     background: radial-gradient(circle, #2c3e50 0%, #000000 100%);
-    font-family: sans-serif;
+    font-family: fantasy;
 }
 
 /*.floating-title {
@@ -36,15 +36,15 @@ body {
     100% { transform: translateY(0px) rotate(-1deg); }
 }*/
 
-.game-title{
+/*.game-title{
   width: 400px;
   height: 80px;
   border: 2px solid #ddd;
-  border-radius: 10%; /* Makes it a circle */
+  border-radius: 10%; /* Makes it a circle 
   margin: 10px;
   object-fit: cover;
   background-color: #f0f0f0;
-}
+}*/
 
 .Profile {
     background: rgba(255, 255, 255, 0.05);
@@ -89,14 +89,17 @@ nav{position: absolute; top: 20px; right: 20px; display: flex; gap: 10px;}
     text-align: center;
     color: gold;
 
+
 }
 
 .rules{
     border: 2px solid #678192;
-    padding: 30px;
+    padding: 20px;
     background-color: #2c3e50;
     border-radius: 15px;
-    text-align: center;
+    text-align: left;
+    color: rgb(196, 196, 117);
+    font-size: large;
 }
 
 /*-------------------------------------------------------------*/
@@ -110,7 +113,7 @@ nav{position: absolute; top: 20px; right: 20px; display: flex; gap: 10px;}
     padding: 10px;
     font-size: large;
     text-align: center;
-    font-family: fantasy;
+
 }
 
 .profile-upload{
@@ -127,6 +130,9 @@ nav{position: absolute; top: 20px; right: 20px; display: flex; gap: 10px;}
   margin: 10px;
   object-fit: cover;
   background-color: #f0f0f0;
+  text-align:center;
+  justify-content:end;
+  align-items: center;
  }
 
 /*#display-image:hover{
