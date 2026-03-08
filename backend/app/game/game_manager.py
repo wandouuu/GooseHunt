@@ -1,5 +1,6 @@
 import random
 import string
+from app.game.game import Game 
 
 class GameManager:
     def __init__(self):
@@ -19,3 +20,5 @@ class GameManager:
     def remove_game(self, game_id: str):
         if game_id in self.active_games:
             del self.active_games[game_id]
+
+game_manager = GameManager()

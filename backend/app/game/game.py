@@ -1,8 +1,10 @@
 import random
 import math
-from player import Player
-import time 
-import spatial_logic
+from app.game.player import Player
+import time
+import asyncio
+from app.game.spatial_logic import is_outside_boundary
+import threading
 
 class Game:
     def __init__(self, game_id, center_lat, center_lon, player_id, player_name):
@@ -14,27 +16,28 @@ class Game:
         self.max_players = 200
         self.radius = 400
         self.current_radius = 400
-        self.next_radius = 300
-        self.zone_changing = False
+        self.next_radius= 300
+        self.zone_changing =False
+        self.zone_timer= "6:00"
         
 
     def add_player(self, player_id, player_name, lat, lon):
-        if(( not self.game_started) and (self.players.len() < self.max_players)):
+        if(( not self.game_started) and (len(self.players) < self.max_players)):
             player = Player(player_id, player_name, lat, lon)
             self.players[player_id] = player
     
     def assign_roles(self):
-        num_seekers = max(1, math.ceil(0.1 * self.players.len()))
+        num_seekers = max(1, math.ceil(0.1 * len(self.players)))
         
-        seekers = random.sample(self.players, num_seekers)
+        seekers = random.sample(list(self.players.keys()), num_seekers)
 
-        for player in self.players:
-            if player in seekers:
+        for player_id in self.players:
+            if player_id in seekers:
                 # role = 0 for seeker
-                player.role = 0
+                self.players[player_id].role = 0
             else:
                 # role = 1 for hider
-                player.role = 1
+                self.players[player_id].role = 1
 
     def shrink_zone(self):
         self.radius = self.radius * 0.75
@@ -74,7 +77,7 @@ class Game:
 
         counter = 0
         for i in range(5):
-            if spatial_logic.is_outside_boundary(player.lat[i], player.lon[i], self.center_lat, self.center_lon, self.radius):
+            if is_outside_boundary(player.lat[i], player.lon[i], self.center_lat, self.center_lon, self.radius):
                 counter += 1
             else:
                 await self.broadcast({"query": "game_state", "game_state": "game_on"})
@@ -111,14 +114,55 @@ class Game:
                               "radius": self.radius,
                               "roles": {pid: p.role for pid, p in self.players.items()}})
 
+    def start_timer(self):
+        self._loop = asyncio.get_event_loop()
+        thread = threading.Thread(target=self.timer, daemon=True)
+        thread.start()
 
-                    
+    def timer(self):
+        init_time = time.monotonic()
+        zone_change_time= 360
+        multiplier = 1
 
-
-
+        while True:
+            time.sleep(1)
+            elapsed_time = time.monotonic() - init_time
+            time_left = zone_change_time - elapsed_time
+            time_left = int(time_left)
             
-    
-    
+            if time_left % 5 == 0:
+                asyncio.run_coroutine_threadsafe(
+                    self.broadcast({"query": "zone_changing", "next_radius": self.send_zone_changing()}),
+                    self._loop
+                ).result()
+            
+            self.update_time(time_left)
 
+            if time_left <= 0:
+                multiplier += 1
+                self.zone_changing = True
+                time_left= 60
 
-    
+                while time_left > 0:
+
+                    time.sleep(1)
+                    self.update_time(time_left+300)
+
+                    if time_left % 5 == 0:
+                        asyncio.run_coroutine_threadsafe(
+                            self.broadcast({"query": "zone_changing", "next_radius": self.send_zone_changing()}),
+                            self._loop
+                        ).result()
+                    time_left -= 1
+
+                self.zone_changing = False
+                time_left= 300
+                zone_change_time*= multiplier
+                init_time = time.monotonic()
+
+                self.shrink_zone()
+
+    def update_time(self, seconds):
+        minutes = seconds // 60
+        secs = seconds % 60
+        self.zone_timer = f"{minutes}:{secs:02d}"
