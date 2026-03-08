@@ -22,8 +22,8 @@ class Game:
 
     def add_player(self, player_id, player_name, lat, lon):
         if(( not self.game_started) and (self.players.len() < self.max_players)):
-            player = Player(id, name, lat, lon)
-            self.players.append(player)
+            player = Player(player_id, player_name, lat, lon)
+            self.players[player_id] = player
     
     def assign_roles(self):
         num_seekers = max(1, math.ceil(0.1 * self.players.len()))
@@ -69,6 +69,21 @@ class Game:
 
         player.lat[0] = lat
         player.lon[0] = lon
+
+    async def update_location(self, player_id, lat, lon):
+        self.update_position(player_id, lat, lon)
+        player = self.players[player_id]
+
+        counter = 0
+        for i in range(5):
+            if spatial_logic.is_outside_boundary(player.lat[i], player.lon[i], self.center_lat, self.center_lon, self.radius):
+                counter += 1
+            else:
+                await self.broadcast({"query": "game_state", "game_state": "game_on"})
+                return
+
+        if counter == 5:
+            await self.broadcast({"query": "game_state", "game_state": "game_over", "player_caught": player.name})
 
     async def broadcast(self, message: dict):
         # For each player broadcast to everyone
