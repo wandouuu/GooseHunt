@@ -50,3 +50,5 @@ GPT-4: https://chatgpt.com/ : OpenAI : UI overview on map reaserch
 Copilot : https://copilot.microsoft.com/ : Microsoft : used for reaserch and inspiration for backend code as well as perfecting documentation making it more concise
 
 Gemini: https://gemini.google.com/app : Google : used for front-end to help with CSS, JS and image generation
+
+CanvaAI: https://www.canva.com/ai-assistant/ : Canva : used for styling presentation.
