@@ -113,7 +113,7 @@ class Game:
                               "radius": self.radius,
                               "roles": {pid: p.role for pid, p in self.players.items()}})
 
-    def start_timer():
+    def start_timer(self):
         thread= threading.Thread(target=self.timer, daemon=True)
         thread.start()
     def timer(self):
