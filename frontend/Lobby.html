@@ -6,13 +6,27 @@
         <!--<link rel="icon" type="image/png" class="game-logo">-->
     </head>
     <body>
+        <img src="goosehunt2.png" alt="Goose Hunt" class="game-title">
+
         <nav>
-            <button class="btns">🗺️MAP</button>
-            <button class="btns">RULES</div>
+            <button class="btns" id="rulez">RULES</div>
         </nav>
 
+        <button class="Rule-pop-up" id="list-of-rules">
+            <div class="rules">  
+                <h3>RULES</h3>
+
+                <ol type="I">
+                    <li>Hide from the Goose</li>
+                    <li>Don't be the Goose</li>
+                    <li>Win the game</li>
+                </ol>
+
+            </div>
+        </button>
+
         <div class="Profile">
-            <div class="profile-upload">
+            <!--<div class="profile-upload">
                 <label for="image-input">
                     <div id="display-image">
                         <span class="upload-text">CHOOSE AVATAR</span>
@@ -20,7 +34,9 @@
                 </label>
                 
                 <input type="file" id="image-input" accept="image/*" style="display: none;">
-            </div>
+            </div>-->
+
+            <img class="game-icon" src="Gemini_Generated_Image_rtdgkartdgkartdg.png" alt="Goose Hunt - A University of Waterloo Game">
 
             <div class="name-input">
                 <input type="text" placeholder="ENTER PLAYER NAME" id="player-name" >            
@@ -36,7 +52,7 @@
 
         <div class="Join-pop-up" id="join-pop-up">
             <div class="pop-up-contents">
-                <h2>ENTER THE LOBBY</h2>
+                <h2>ENTER THE LOBBY ID</h2>
                 <input type="text" id="join-id" >
                 <div class="pop-up-window">
                     <button class="first-btn" id="confirm-join">CONFIRM JOIN</button>
@@ -45,9 +61,16 @@
             </div>
         </div>
 
-        <footer style="position: fixed; bottom: 0; width: 100%; background: #678192; color: white; text-align: center; padding: 10px; font-family: fantasy;">
-            RULES: 1. Find the Goose. 2. Don't be the Goose. 3. Win the game.
-        </footer>
+        <!--<div class="Create-pop-up" id="create-pop-up">
+            <div class="given-game-id">
+                <h3>GAME ID</h3>
+                <span id="generated-id" style="color: gold; font-size: 24px; font-family: fantasy;">Connecting...</span>
+                <br>
+                <button class="enter" id="enter-join">ENTER</button>
+            </div>
+        </div>-->
+
+        
 
         <!--<div class="Alternate">
             <input type="file" id="file-picker"  style="display: none;">
