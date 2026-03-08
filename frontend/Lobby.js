@@ -21,9 +21,16 @@ image_input.addEventListener("change",function(){
         reader.readAsDataURL(this.files[0]);
     }
 });*/
+let playerId;
+let gameId;
+let centerLat;
+let centerLon;
 
-const rulesBtn = document.querySelector("#rulez")
-const list_of_rules =document.querySelector("#list-of-rules")
+
+
+
+const rulesBtn = document.querySelector("#rulez");
+const list_of_rules = document.querySelector("#list-of-rules");
 
 rulesBtn.addEventListener("click", () => {
     list_of_rules.style.display = "flex";
@@ -42,8 +49,8 @@ const confirm_join =  document.querySelector("#confirm-join")
 
 const player_name = document.querySelector("#player-name")
 
-/*const createBtn = document.querySelector("#create-game")
-const create_pop_up = document.querySelector("#create-pop-up")
+const createBtn = document.querySelector("#create-game")
+/*const create_pop_up = document.querySelector("#create-pop-up")
 const enter_join = document.querySelector("#enter-join")*/
 
 //open pop-up
@@ -70,17 +77,56 @@ window.addEventListener("click", (event) =>{
 });
 
 //when confirm is pressed
-confirm_join.addEventListener("click", () => {
-    const lobbyInput = document.querySelector("#join-id");
-    const idValue = lobbyInput.value; // Use .value, not .ariaValueMax
-    
-    if(idValue) {
-        window.location.href= 'mapPage.html'
-    } else {
-        alert("Please enter a Lobby ID!");
+confirm_join.addEventListener("click", async () => {
+   
+
+    try {
+        const position = navigator.geolocation.getCurrentPosition();
+        centerLat = position.coords.latitude;
+        centerLon = position.coords.longitude;
+    } catch (err) {
+        console.error('Failed to get location:', err);
+        // might continue without coords or abort; we'll continue anyway
+    }
+
+    try {
+        const response = await fetch(`/api/join_game/${gameId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                player_name: player_name.value,
+                lat: centerLat,
+                lon: centerLon
+            })
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Join failed: ${response.status} ${errText}`);
+        }
+
+        const data = await response.json();
+        playerId = data.player_id;
+        gameId = data.game_id;
+
+       
+        window.location.href = `mapPage.html`;
+
+    } catch (err) {
+        console.error('Error joining game:', err);
+        alert('Unable to join game. See console for details.');
     }
 });
 
+createBtn.addEventListener("click", () => {
+    if(player_name.value.trim() !== ""){
+        window.location.href= 'mapPage.html'
+    }
+    else{
+        alert("Enter your Name!");
+        player_name.style.borderColor = "red";
+    }
+});
 
 /*createBtn.addEventListener("click", () => {
     if(player_name.value.trim() !== ""){
