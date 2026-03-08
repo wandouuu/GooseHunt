@@ -104,9 +104,6 @@ navigator.geolocation.watchPosition(
 );
 
 
-// until the game ends
-let lastRadUpdate = 0;
-
 socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
 
