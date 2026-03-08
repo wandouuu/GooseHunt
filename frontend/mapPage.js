@@ -19,13 +19,10 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-   
+
 //draws circle
 
-// REPLACE WITH centerLat, centerLon
-let circle = L.circle([43.47032, -80.54232], {
-radius: 400
-}).addTo(map);
+
 
 // UI
 // if(role == "Seeker"){
@@ -34,13 +31,13 @@ radius: 400
 
 
 
-function updateTimer(seconds){
+function updateTimer(seconds) {
     let minutes = Math.floor(seconds / 60);
     seconds = seconds - (minutes * 60);
-    if(seconds < 10){
-        document.getElementById("timer").textContent = "Time Left: " + minutes + ":0" + seconds;    
+    if (seconds < 10) {
+        document.getElementById("timer").textContent = "Time Left: " + minutes + ":0" + seconds;
     }
-    else{
+    else {
         document.getElementById("timer").textContent = "Time Left: " + minutes + ":" + seconds;
     }
 }
@@ -49,7 +46,7 @@ let timeLeft = 20;
 
 
 setInterval(() => {
-    if(timeLeft > 0){
+    if (timeLeft > 0) {
         timeLeft--;
         updateTimer(timeLeft);
     }
@@ -72,8 +69,8 @@ navigator.geolocation.watchPosition(
         let now = Date.now();
 
         // no more than once a second, send new position through websocket
-        if(now - lastPosUpdate >= 1000){
-            
+        if (now - lastPosUpdate >= 1000) {
+
             const data = {
                 query: "update_location",
                 lat: lat,
@@ -84,13 +81,13 @@ navigator.geolocation.watchPosition(
 
             lastPosUpdate = now;
         }
-    
-        if(!playerMarker) {
+
+        if (!playerMarker) {
             playerMarker = L.marker(latlng);
             playerMarker.addTo(map);
             map.setView(latlng, 24);
         }
-        else{
+        else {
             playerMarker.setLatLng(latlng);
         }
     },
@@ -109,38 +106,43 @@ let lastRadUpdate = 0;
 socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
 
-    if(data.query === "radius_update"){
-        circle.setRadius(data.radius);
-    }
-    else if(data.query === "role_update"){
-        document.getElementById("player-role").textContent = data.role;
-        if(data.query == "Seeker"){
-            document.getElementById("caught-btn").style.display = "none";
-        }
-    }
+    if (data.query === "zone_changing") {
+        circle.setRadius(data.next_radius);
+    } else if (data.query === "game_state") {
+        if (data.game_state === "game_over") {
 
+        } else {
+
+        }
+    } else if (data.query === "game_started") {
+        // REPLACE WITH centerLat, centerLon
+        let circle = L.circle([data.center_lat, data.center_lon], {
+            radius: data.radius
+        }).addTo(map);
+        document.getElementById("player-role").innerText = data.roles[PlayerId]
+    }
 }
 
 
 document.getElementById("caught-btn").addEventListener("click", async () => {
-    try{
+    try {
         const response = await fetch(`http://localhost:8000/game_state/caught?game_id=${GameId}&player_id=${PlayerId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             }
         });
-        
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         console.log("Caught response:", data);
-        
+
         document.getElementById("caught-btn").style.display = "none";
-        
-    }catch (error) {
+
+    } catch (error) {
         console.error("Error sending caught status:", error);
     }
 });
