@@ -9,6 +9,7 @@ document.getElementById("game-id").textContent = GameId;
 
 const socket = new WebSocket(`ws://localhost:8000/ws/game/${GameId}/${PlayerId}`);
 
+let hidersRemaining = 0;
 
 
 
@@ -109,15 +110,28 @@ socket.onmessage = (event) => {
         circle.setRadius(data.next_radius);
     } else if (data.query === "game_state") {
         if (data.game_state === "game_over") {
+            hidersRemaining--;
+            document.getElementById("hider-count").textContent = hidersRemaining;
             window.location.href = "GameOver.html";
-        } else {
-
         }
     } else if (data.query === "game_started") {
         circle = L.circle([data.center_lat, data.center_lon], {
             radius: data.radius
         }).addTo(map);
-        document.getElementById("player-role").innerText = data.roles[PlayerId] === 0 ? "Seeker" : "Hider";
+
+        // Set role display
+        const myRole = data.roles[PlayerId];
+        document.getElementById("player-role").innerText = myRole === 0 ? "Seeker" : "Hider";
+
+        // Count and display hiders
+        hidersRemaining = Object.values(data.roles).filter(r => r === 1).length;
+        document.getElementById("hider-count").textContent = hidersRemaining;
+
+        // Hide caught button for seekers (seekers can't be caught)
+        if (myRole === 0) {
+            document.getElementById("caught-btn").style.display = "none";
+        }
+
         document.getElementById("start-game-btn").style.display = "none";
         startTimer(360); // 6 minutes
     }
