@@ -1,9 +1,10 @@
 import random
 import math
 from app.game.player import Player
-import time 
+import time
+import asyncio
 from app.game.spatial_logic import is_outside_boundary
-import threading 
+import threading
 
 class Game:
     def __init__(self, game_id, center_lat, center_lon, player_id, player_name):
@@ -114,7 +115,8 @@ class Game:
                               "roles": {pid: p.role for pid, p in self.players.items()}})
 
     def start_timer(self):
-        thread= threading.Thread(target=self.timer, daemon=True)
+        self._loop = asyncio.get_event_loop()
+        thread = threading.Thread(target=self.timer, daemon=True)
         thread.start()
 
     def timer(self):
@@ -129,7 +131,10 @@ class Game:
             time_left = int(time_left)
             
             if time_left % 5 == 0:
-                self.broadcast({"query": "zone_changing", "next_radius": self.send_zone_changing()})
+                asyncio.run_coroutine_threadsafe(
+                    self.broadcast({"query": "zone_changing", "next_radius": self.send_zone_changing()}),
+                    self._loop
+                ).result()
             
             self.update_time(time_left)
 
@@ -144,7 +149,10 @@ class Game:
                     self.update_time(time_left+300)
 
                     if time_left % 5 == 0:
-                        self.broadcast({"query": "zone_changing", "next_radius": self.send_zone_changing()})
+                        asyncio.run_coroutine_threadsafe(
+                            self.broadcast({"query": "zone_changing", "next_radius": self.send_zone_changing()}),
+                            self._loop
+                        ).result()
                     time_left -= 1
 
                 self.zone_changing = False
@@ -158,19 +166,3 @@ class Game:
         minutes = seconds // 60
         secs = seconds % 60
         self.zone_timer = f"{minutes}:{secs:02d}"
-
-
-
-            
-
-
-                    
-
-
-
-            
-    
-    
-
-
-    
