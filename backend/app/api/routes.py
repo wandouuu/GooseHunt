@@ -61,6 +61,10 @@ async def leave_game(game_id: str, player_id: str):
 @router.post("/game_state/caught/{game_id}/{player_id}")
 async def caught(game_id: str, player_id: str):
     if game_id in game_manager.active_games:
-        return {"query": "game_state", "game_state": "game_over", "player_caught": player_id}
+        game = game_manager.active_games[game_id]
+        player_name = game.players[player_id].name if player_id in game.players else player_id
+        await game.broadcast({"query": "game_state", "game_state": "game_over", "player_caught": player_name})
+        game_manager.remove_game(game_id)
+        return {"query": "game_state", "game_state": "game_over", "player_caught": player_name}
     else:
         raise HTTPException(status_code=404, detail="Game not found")

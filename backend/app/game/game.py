@@ -75,13 +75,11 @@ class Game:
         self.update_position(player_id, lat, lon)
         player = self.players[player_id]
 
+        # Check if all 5 recent positions are outside boundary
         counter = 0
         for i in range(5):
             if is_outside_boundary(player.lat[i], player.lon[i], self.center_lat, self.center_lon, self.radius):
                 counter += 1
-            else:
-                await self.broadcast({"query": "game_state", "game_state": "game_on"})
-                return
 
         if counter == 5:
             await self.broadcast({"query": "game_state", "game_state": "game_over", "player_caught": player.name})
@@ -113,6 +111,8 @@ class Game:
                               "center_lon": self.center_lon,
                               "radius": self.radius,
                               "roles": {pid: p.role for pid, p in self.players.items()}})
+
+        self.start_timer()
 
     def start_timer(self):
         self._loop = asyncio.get_event_loop()

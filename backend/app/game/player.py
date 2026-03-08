@@ -1,5 +1,5 @@
 class Player:
-    # role = 0 for hider and 1 for seeker
+    # role = 0 for seeker and 1 for hider
     def __init__(self, player_id, player_name, lat, lon):
         self.player_id = player_id
         self.name = player_name

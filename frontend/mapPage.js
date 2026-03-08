@@ -9,7 +9,7 @@ document.getElementById("game-id").textContent = GameId;
 
 const socket = new WebSocket(`ws://localhost:8000/ws/game/${GameId}/${PlayerId}`);
 
-let role;
+
 
 
 // Initialize map
@@ -39,15 +39,20 @@ function updateTimer(seconds) {
 }
 
 //set to the amount of time for a game in seconds, will update every second
-let timeLeft = 20;
+let timeLeft = 0;
+let timerInterval = null;
 
-
-setInterval(() => {
-    if (timeLeft > 0) {
-        timeLeft--;
-        updateTimer(timeLeft);
-    }
-}, 1000);
+function startTimer(seconds) {
+    timeLeft = seconds;
+    updateTimer(timeLeft);
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        if (timeLeft > 0) {
+            timeLeft--;
+            updateTimer(timeLeft);
+        }
+    }, 1000);
+}
 
 
 
@@ -114,6 +119,7 @@ socket.onmessage = (event) => {
         }).addTo(map);
         document.getElementById("player-role").innerText = data.roles[PlayerId] === 0 ? "Seeker" : "Hider";
         document.getElementById("start-game-btn").style.display = "none";
+        startTimer(360); // 6 minutes
     }
 }
 
