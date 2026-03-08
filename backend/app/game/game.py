@@ -125,8 +125,9 @@ class Game:
         while True:
             time.sleep(1)
             elapsed_time = time.monotonic() - init_time
-            int(time_left) = zone_change_time - elapsed_time
-
+            time_left = zone_change_time - elapsed_time
+            time_left = int(time_left)
+            
             if time_left % 5 == 0:
                 self.broadcast({"query": "zone_changing", "next_radius": self.send_zone_changing()})
             
