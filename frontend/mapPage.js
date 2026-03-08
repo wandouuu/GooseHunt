@@ -1,8 +1,13 @@
+// Read state from sessionStorage (set by Lobby.js)
+const PlayerId = sessionStorage.getItem("playerId");
+const GameId = sessionStorage.getItem("gameId");
+const centerLat = parseFloat(sessionStorage.getItem("centerLat"));
+const centerLon = parseFloat(sessionStorage.getItem("centerLon"));
+
+// Display the game ID on the UI
+document.getElementById("game-id").textContent = GameId;
+
 const socket = new WebSocket(`ws://localhost:8000/ws/game/${GameId}/${PlayerId}`);
-
-
-// THIS NEEDS VARS:
-// gameState = true for game still going, false for game over
 
 let role;
 
@@ -17,17 +22,9 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 
 //draws circle
-
-// REPLACE WITH centerLat, centerLon
 let circle = L.circle([centerLat, centerLon], {
     radius: 400
 }).addTo(map);
-
-// UI
-// if(role == "Seeker"){
-//     document.getElementById("caught-btn").style.display = "none";
-// }
-
 
 
 function updateTimer(seconds) {
@@ -126,59 +123,10 @@ document.getElementById("start-game-btn").addEventListener("click", () => {
     socket.send(JSON.stringify({ query: "start_game" }));
 });
 
-// POST /api/create_game
-// Body: { player_name, lat, lon, center_lat, center_lon }
-async function createGame(playerName, lat, lon, centerLat, centerLon) {
-    try {
-        const response = await fetch("http://localhost:8000/api/create_game", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                player_name: playerName,
-                lat: lat,
-                lon: lon,
-                center_lat: centerLat,
-                center_lon: centerLon
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Game created:", data);
-        return data; // { game_id, player_id }
-
-    } catch (error) {
-        console.error("Error creating game:", error);
-    }
-}
-
-// POST /api/leave_game/{game_id}/{player_id}
-async function leaveGame() {
-    try {
-        const response = await fetch(`http://localhost:8000/api/leave_game/${GameId}/${PlayerId}`, {
-            method: "POST"
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Left game:", data);
-        return data; // { query: "status", status: "left" }
-
-    } catch (error) {
-        console.error("Error leaving game:", error);
-    }
-}
-
 // POST /api/game_state/caught/{game_id}/{player_id}
 document.getElementById("caught-btn").addEventListener("click", async () => {
     try {
-        const response = await fetch(`http://localhost:8000/game_state/caught?game_id=${GameId}&player_id=${PlayerId}`, {
+        const response = await fetch(`http://localhost:8000/api/game_state/caught/${GameId}/${PlayerId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -197,6 +145,4 @@ document.getElementById("caught-btn").addEventListener("click", async () => {
     } catch (error) {
         console.error("Error sending caught status:", error);
     }
-
-
 });

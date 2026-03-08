@@ -50,8 +50,15 @@ const confirm_join = document.querySelector("#confirm-join")
 const player_name = document.querySelector("#player-name")
 
 const createBtn = document.querySelector("#create-game")
-/*const create_pop_up = document.querySelector("#create-pop-up")
-const enter_join = document.querySelector("#enter-join")*/
+
+// Helper: get current position as a Promise
+function getPosition() {
+    return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true
+        });
+    });
+}
 
 //open pop-up
 joinBtn.addEventListener("click", () => {
@@ -76,21 +83,31 @@ window.addEventListener("click", (event) => {
     }
 });
 
-//when confirm is pressed
+//when confirm join is pressed
 confirm_join.addEventListener("click", async () => {
 
+    // Read the game ID from the input field
+    const joinIdInput = document.querySelector("#join-id");
+    gameId = joinIdInput.value.trim();
+
+    if (!gameId) {
+        alert("Enter a Game ID!");
+        joinIdInput.style.borderColor = "red";
+        return;
+    }
 
     try {
-        const position = navigator.geolocation.getCurrentPosition();
+        const position = await getPosition();
         centerLat = position.coords.latitude;
         centerLon = position.coords.longitude;
     } catch (err) {
         console.error('Failed to get location:', err);
-        // might continue without coords or abort; we'll continue anyway
+        alert('Location access is required to join a game.');
+        return;
     }
 
     try {
-        const response = await fetch(`/api/join_game/${gameId}`, {
+        const response = await fetch(`http://localhost:8000/api/join_game/${gameId}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -109,6 +126,11 @@ confirm_join.addEventListener("click", async () => {
         playerId = data.player_id;
         gameId = data.game_id;
 
+        // Store state so mapPage.js can read it
+        sessionStorage.setItem("playerId", playerId);
+        sessionStorage.setItem("gameId", gameId);
+        sessionStorage.setItem("centerLat", centerLat);
+        sessionStorage.setItem("centerLon", centerLon);
 
         window.location.href = `mapPage.html`;
 
@@ -118,33 +140,56 @@ confirm_join.addEventListener("click", async () => {
     }
 });
 
-createBtn.addEventListener("click", () => {
-    if (player_name.value.trim() !== "") {
-        window.location.href = 'mapPage.html'
-    }
-    else {
+// CREATE GAME button — calls API then navigates
+createBtn.addEventListener("click", async () => {
+    if (player_name.value.trim() === "") {
         alert("Enter your Name!");
         player_name.style.borderColor = "red";
+        return;
+    }
+
+    try {
+        const position = await getPosition();
+        centerLat = position.coords.latitude;
+        centerLon = position.coords.longitude;
+    } catch (err) {
+        console.error('Failed to get location:', err);
+        alert('Location access is required to create a game.');
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:8000/api/create_game", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                player_name: player_name.value,
+                lat: centerLat,
+                lon: centerLon,
+                center_lat: centerLat,
+                center_lon: centerLon
+            })
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Create failed: ${response.status} ${errText}`);
+        }
+
+        const data = await response.json();
+        playerId = data.player_id;
+        gameId = data.game_id;
+
+        // Store state so mapPage.js can read it
+        sessionStorage.setItem("playerId", playerId);
+        sessionStorage.setItem("gameId", gameId);
+        sessionStorage.setItem("centerLat", centerLat);
+        sessionStorage.setItem("centerLon", centerLon);
+
+        window.location.href = 'mapPage.html';
+
+    } catch (err) {
+        console.error('Error creating game:', err);
+        alert('Unable to create game. See console for details.');
     }
 });
-
-/*createBtn.addEventListener("click", () => {
-    if(player_name.value.trim() !== ""){
-        create_pop_up.style.display = "flex";
-    }
-    else{
-        alert("Enter your Name!");
-        player_name.style.borderColor = "red";
-    }
-});
-
-window.addEventListener("click", (event) =>{
-    if (event.target == create_pop_up){
-        create_pop_up.style.display = "none"
-    }
-});*/
-
-
-
-
-
