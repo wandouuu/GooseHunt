@@ -116,24 +116,25 @@ class Game:
     def start_timer(self):
         thread= threading.Thread(target=self.timer, daemon=True)
         thread.start()
+
     def timer(self):
         init_time = time.monotonic()
-        zone_change_time= 360 
+        zone_change_time= 360
         while True:
-            time.wait(1)
+            time.sleep(1)
             elapsed_time = time.monotonic() - init_time
-            time_left= zone_change_time - elapsed_time
-            self.update_time(self, time_left)
+            time_left = zone_change_time - elapsed_time
+            self.update_time(time_left)
             if time_left <= 0:
                 self.zone_changing = True
                 time_left= 60
                 while time_left > 0:
-                    time.wait(1)
+                    time.sleep(1)
                     self.update_time(self, time_left+300)
                     time_left -= 1
                 self.zone_changing = False
                 time_left= 300
-                self.shrink_zone(self)
+                self.shrink_zone()
 
     def update_time(self, seconds):
         minutes = seconds // 60
