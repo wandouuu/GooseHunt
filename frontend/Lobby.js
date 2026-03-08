@@ -1,4 +1,4 @@
-const image_input = document.querySelector("#image-input");
+/*const image_input = document.querySelector("#image-input");
 
 image_input.addEventListener("change",function(){
     const reader = new FileReader();
@@ -20,6 +20,19 @@ image_input.addEventListener("change",function(){
     if(this.files && this.files[0]) {
         reader.readAsDataURL(this.files[0]);
     }
+});*/
+
+const rulesBtn = document.querySelector("#rulez")
+const list_of_rules =document.querySelector("#list-of-rules")
+
+rulesBtn.addEventListener("click", () => {
+    list_of_rules.style.display = "flex";
+});
+
+window.addEventListener("click", (event)=>{
+    if(event.target == list_of_rules){
+        list_of_rules.style.display = "none";
+    }
 });
 
 const joinBtn = document.querySelector("#join-game")
@@ -27,9 +40,21 @@ const join_pop_up = document.querySelector("#join-pop-up")
 const close_pop_up = document.querySelector("#cancel")
 const confirm_join =  document.querySelector("#confirm-join")
 
+const player_name = document.querySelector("#player-name")
+
+/*const createBtn = document.querySelector("#create-game")
+const create_pop_up = document.querySelector("#create-pop-up")
+const enter_join = document.querySelector("#enter-join")*/
+
 //open pop-up
 joinBtn.addEventListener("click", () => {
-    join_pop_up.style.display = "flex";
+    if(player_name.value.trim() !== ""){
+        join_pop_up.style.display = "flex";
+    }
+    else{
+        alert("Enter your Name!");
+        player_name.style.borderColor = "red";
+    }
 });
 
 //close pop-up
@@ -55,5 +80,25 @@ confirm_join.addEventListener("click", () => {
         alert("Please enter a Lobby ID!");
     }
 });
+
+
+/*createBtn.addEventListener("click", () => {
+    if(player_name.value.trim() !== ""){
+        create_pop_up.style.display = "flex";
+    }
+    else{
+        alert("Enter your Name!");
+        player_name.style.borderColor = "red";
+    }
+});
+
+window.addEventListener("click", (event) =>{
+    if (event.target == create_pop_up){
+        create_pop_up.style.display = "none"
+    }
+});*/
+
+
+
 
 
