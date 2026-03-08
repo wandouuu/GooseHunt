@@ -26,10 +26,9 @@ async def game_websocket(websocket: WebSocket, game_id: str, player_id: str):
 
             match data["query"]:
                 case "update_location":
-                    update_location(player_id, data["lat"], data["lon"])
+                    await game.update_location(player_id, data["lat"], data["lon"])
                 case "start_game":
-                    start_game()
-                    await game.broadcast({"query": "game_state", "game_state": "game_on"})
+                    await game.start_game()
     
     except WebSocketDisconnect:
         game.disconnect(player_id)
