@@ -42,8 +42,8 @@ const confirm_join =  document.querySelector("#confirm-join")
 
 const player_name = document.querySelector("#player-name")
 
-/*const createBtn = document.querySelector("#create-game")
-const create_pop_up = document.querySelector("#create-pop-up")
+const createBtn = document.querySelector("#create-game")
+/*const create_pop_up = document.querySelector("#create-pop-up")
 const enter_join = document.querySelector("#enter-join")*/
 
 //open pop-up
@@ -75,12 +75,21 @@ confirm_join.addEventListener("click", () => {
     const idValue = lobbyInput.value; // Use .value, not .ariaValueMax
     
     if(idValue) {
-        alert("Entering Lobby: " + idValue);
+        window.location.href= 'mapPage.html'
     } else {
         alert("Please enter a Lobby ID!");
     }
 });
 
+createBtn.addEventListener("click", () => {
+    if(player_name.value.trim() !== ""){
+        window.location.href= 'mapPage.html'
+    }
+    else{
+        alert("Enter your Name!");
+        player_name.style.borderColor = "red";
+    }
+});
 
 /*createBtn.addEventListener("click", () => {
     if(player_name.value.trim() !== ""){
