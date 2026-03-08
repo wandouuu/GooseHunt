@@ -121,7 +121,7 @@ class Game:
 
     def timer(self):
         init_time = time.monotonic()
-        zone_change_time= 360
+        zone_change_time= 60
         multiplier = 1
 
         while True:
@@ -146,7 +146,7 @@ class Game:
                 while time_left > 0:
 
                     time.sleep(1)
-                    self.update_time(time_left+300)
+                    self.update_time(time_left+0)
 
                     if time_left % 5 == 0:
                         asyncio.run_coroutine_threadsafe(
@@ -156,7 +156,7 @@ class Game:
                     time_left -= 1
 
                 self.zone_changing = False
-                time_left= 300
+                time_left= 0
                 zone_change_time*= multiplier
                 init_time = time.monotonic()
 
