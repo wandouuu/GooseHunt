@@ -1,9 +1,10 @@
 import random
 import math
 from app.game.player import Player
-import time 
+import time
+import asyncio
 from app.game.spatial_logic import is_outside_boundary
-import threading 
+import threading
 
 class Game:
     def __init__(self, game_id, center_lat, center_lon, player_id, player_name):
@@ -114,45 +115,54 @@ class Game:
                               "roles": {pid: p.role for pid, p in self.players.items()}})
 
     def start_timer(self):
-        thread= threading.Thread(target=self.timer, daemon=True)
+        self._loop = asyncio.get_event_loop()
+        thread = threading.Thread(target=self.timer, daemon=True)
         thread.start()
 
     def timer(self):
         init_time = time.monotonic()
         zone_change_time= 360
+        multiplier = 1
+
         while True:
             time.sleep(1)
             elapsed_time = time.monotonic() - init_time
             time_left = zone_change_time - elapsed_time
+            time_left = int(time_left)
+            
+            if time_left % 5 == 0:
+                asyncio.run_coroutine_threadsafe(
+                    self.broadcast({"query": "zone_changing", "next_radius": self.send_zone_changing()}),
+                    self._loop
+                ).result()
+            
             self.update_time(time_left)
+
             if time_left <= 0:
+                multiplier += 1
                 self.zone_changing = True
                 time_left= 60
+
                 while time_left > 0:
+
                     time.sleep(1)
-                    self.update_time(self, time_left+300)
+                    self.update_time(time_left+300)
+
+                    if time_left % 5 == 0:
+                        asyncio.run_coroutine_threadsafe(
+                            self.broadcast({"query": "zone_changing", "next_radius": self.send_zone_changing()}),
+                            self._loop
+                        ).result()
                     time_left -= 1
+
                 self.zone_changing = False
                 time_left= 300
+                zone_change_time*= multiplier
+                init_time = time.monotonic()
+
                 self.shrink_zone()
 
     def update_time(self, seconds):
         minutes = seconds // 60
         secs = seconds % 60
-        self.timer_text = f"{minutes}:{secs:02d}"
-
-
-
-            
-
-
-                    
-
-
-
-            
-    
-    
-
-
-    
+        self.zone_timer = f"{minutes}:{secs:02d}"

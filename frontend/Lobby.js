@@ -75,7 +75,7 @@ confirm_join.addEventListener("click", () => {
     const idValue = lobbyInput.value; // Use .value, not .ariaValueMax
     
     if(idValue) {
-        alert("Entering Lobby: " + idValue);
+        window.location.href= 'mapPage.html'
     } else {
         alert("Please enter a Lobby ID!");
     }

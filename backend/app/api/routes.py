@@ -56,7 +56,7 @@ async def leave_game(game_id: str, player_id: str):
     else:
         raise HTTPException(status_code=404, detail="Game not found")
 
-@router.post("/game_state/caught")
+@router.post("/game_state/caught/{game_id}/{player_id}")
 async def caught(game_id: str, player_id: str):
     if game_id in game_manager.active_games:
         return {"query": "game_state", "game_state": "game_over", "player_caught": player_id}
