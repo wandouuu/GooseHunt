@@ -3,6 +3,7 @@ import math
 from player import Player
 import time 
 import spatial_logic
+import threading 
 
 class Game:
     def __init__(self, game_id, center_lat, center_lon, player_id, player_name):
@@ -16,6 +17,7 @@ class Game:
         self.current_radius = 400
         self.next_radius= 300
         self.zone_changing =False
+        self.zone_timer= "6:00"
         
 
     def add_player(self, player_id, player_name, lat, lon):
@@ -95,6 +97,37 @@ class Game:
                               "center_lon": self.center_lon,
                               "radius": self.radius,
                               "roles": {pid: p.role for pid, p in self.players.items()}})
+
+    def start_timer():
+        thread= threading.Thread(target=self.timer, daemon=True)
+        thread.start()
+    def timer(self):
+        init_time = time.monotonic()
+        zone_change_time= 360 
+        while True:
+            time.wait(1)
+            elapsed_time = time.monotonic() - init_time
+            time_left= zone_change_time - elapsed_time
+            self.update_time(self, time_left)
+            if time_left <= 0:
+                self.zone_changing = True
+                time_left= 60
+                while time_left > 0:
+                    time.wait(1)
+                    self.update_time(self, time_left+300)
+                    time_left -= 1
+                self.zone_changing = False
+                time_left= 300
+                self.shrink_zone(self)
+
+    def update_time(self, seconds):
+        minutes = seconds // 60
+        secs = seconds % 60
+        self.timer_text = f"{minutes}:{secs:02d}"
+
+
+
+            
 
 
                     
