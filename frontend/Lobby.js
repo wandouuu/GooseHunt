@@ -70,14 +70,65 @@ window.addEventListener("click", (event) =>{
 });
 
 //when confirm is pressed
-confirm_join.addEventListener("click", () => {
+confirm_join.addEventListener("click", async () => {
     const lobbyInput = document.querySelector("#join-id");
-    const idValue = lobbyInput.value; // Use .value, not .ariaValueMax
-    
-    if(idValue) {
-        window.location.href= 'mapPage.html'
-    } else {
+    const gameId = lobbyInput.value.trim();
+
+    if (!gameId) {
         alert("Please enter a Lobby ID!");
+        return;
+    }
+
+    try {
+        // Call the join game API
+        const response = await fetch(`http://localhost:8000/api/join_game/${gameId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                player_name: player_name.value.trim(),
+                lat: 0,
+                lon: 0
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to join game: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const playerId = data.player_id;
+
+        // Store IDs so mapPage.js can use them
+        sessionStorage.setItem("GameId", gameId);
+        sessionStorage.setItem("PlayerId", playerId);
+
+        // Open WebSocket connection to listen for game_started
+        const socket = new WebSocket(`ws://localhost:8000/ws/game/${gameId}/${playerId}`);
+
+        socket.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+
+            if (msg.query === "game_started") {
+                // Store game start data for mapPage
+                sessionStorage.setItem("gameStartData", JSON.stringify(msg));
+                window.location.href = "mapPage.html";
+            }
+        };
+
+        socket.onopen = () => {
+            console.log("WebSocket connected, waiting for game to start...");
+            join_pop_up.style.display = "none";
+            alert("Joined game! Waiting for host to start...");
+        };
+
+        socket.onerror = (err) => {
+            console.error("WebSocket error:", err);
+            alert("Failed to connect to the game.");
+        };
+
+    } catch (error) {
+        console.error("Error joining game:", error);
+        alert("Failed to join the game.");
     }
 });
 

@@ -1,13 +1,10 @@
+// Read IDs from sessionStorage (set by Lobby.js)
+const GameId = sessionStorage.getItem("GameId");
+const PlayerId = sessionStorage.getItem("PlayerId");
+
 const socket = new WebSocket(`ws://localhost:8000/ws/game/${GameId}/${PlayerId}`);
 
-
-// THIS NEEDS VARS:
-// gameState = true for game still going, false for game over
-// playerId
-// gameId
-//centerLat
-// centerLon
-//role
+let circle;
 
 
 
@@ -19,6 +16,17 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
+// Check if game already started (redirected from Lobby)
+const gameStartData = sessionStorage.getItem("gameStartData");
+if (gameStartData) {
+    const startData = JSON.parse(gameStartData);
+    circle = L.circle([startData.center_lat, startData.center_lon], {
+        radius: startData.radius
+    }).addTo(map);
+    document.getElementById("player-role").innerText = startData.roles[PlayerId] === 0 ? "Seeker" : "Hider";
+    document.getElementById("start-game-btn").style.display = "none";
+    sessionStorage.removeItem("gameStartData");
+}
 
 //draws circle
 
@@ -115,14 +123,19 @@ socket.onmessage = (event) => {
 
         }
     } else if (data.query === "game_started") {
-        // REPLACE WITH centerLat, centerLon
-        let circle = L.circle([data.center_lat, data.center_lon], {
+        circle = L.circle([data.center_lat, data.center_lon], {
             radius: data.radius
         }).addTo(map);
-        document.getElementById("player-role").innerText = data.roles[PlayerId]
+        document.getElementById("player-role").innerText = data.roles[PlayerId] === 0 ? "Seeker" : "Hider";
+        document.getElementById("start-game-btn").style.display = "none";
     }
 }
 
+
+// Start Game button — sends start_game query via WebSocket
+document.getElementById("start-game-btn").addEventListener("click", () => {
+    socket.send(JSON.stringify({ query: "start_game" }));
+});
 
 document.getElementById("caught-btn").addEventListener("click", async () => {
     try {
@@ -146,3 +159,4 @@ document.getElementById("caught-btn").addEventListener("click", async () => {
         console.error("Error sending caught status:", error);
     }
 });
+
