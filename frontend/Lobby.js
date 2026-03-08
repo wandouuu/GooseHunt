@@ -36,8 +36,8 @@ rulesBtn.addEventListener("click", () => {
     list_of_rules.style.display = "flex";
 });
 
-window.addEventListener("click", (event)=>{
-    if(event.target == list_of_rules){
+window.addEventListener("click", (event) => {
+    if (event.target == list_of_rules) {
         list_of_rules.style.display = "none";
     }
 });
@@ -45,7 +45,7 @@ window.addEventListener("click", (event)=>{
 const joinBtn = document.querySelector("#join-game")
 const join_pop_up = document.querySelector("#join-pop-up")
 const close_pop_up = document.querySelector("#cancel")
-const confirm_join =  document.querySelector("#confirm-join")
+const confirm_join = document.querySelector("#confirm-join")
 
 const player_name = document.querySelector("#player-name")
 
@@ -55,10 +55,10 @@ const enter_join = document.querySelector("#enter-join")*/
 
 //open pop-up
 joinBtn.addEventListener("click", () => {
-    if(player_name.value.trim() !== ""){
+    if (player_name.value.trim() !== "") {
         join_pop_up.style.display = "flex";
     }
-    else{
+    else {
         alert("Enter your Name!");
         player_name.style.borderColor = "red";
     }
@@ -70,15 +70,15 @@ close_pop_up.addEventListener("click", () => {
 });
 
 //close pop-up method 2
-window.addEventListener("click", (event) =>{
-    if (event.target == join_pop_up){
+window.addEventListener("click", (event) => {
+    if (event.target == join_pop_up) {
         join_pop_up.style.display = "none"
     }
 });
 
 //when confirm is pressed
 confirm_join.addEventListener("click", async () => {
-   
+
 
     try {
         const position = navigator.geolocation.getCurrentPosition();
@@ -109,7 +109,7 @@ confirm_join.addEventListener("click", async () => {
         playerId = data.player_id;
         gameId = data.game_id;
 
-       
+
         window.location.href = `mapPage.html`;
 
     } catch (err) {
@@ -119,10 +119,10 @@ confirm_join.addEventListener("click", async () => {
 });
 
 createBtn.addEventListener("click", () => {
-    if(player_name.value.trim() !== ""){
-        window.location.href= 'mapPage.html'
+    if (player_name.value.trim() !== "") {
+        window.location.href = 'mapPage.html'
     }
-    else{
+    else {
         alert("Enter your Name!");
         player_name.style.borderColor = "red";
     }
