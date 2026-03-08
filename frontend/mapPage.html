@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Hide and Seek Map</title>
 
     <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="mapPage.css">
 </head>
 
 <body>
-    
+    <div class="startgame">
+        <button class="start-btn" id="start">Start Game</button>
+    </div>
     <div id="map"></div>
 
     <div id="ui-overlay">
@@ -25,9 +28,11 @@
             Hiders Remaining: <span id="hider-count">5</span>
         </div>
 
-        <div id = "game-id-box">
-            Game Id: <span id = game-id>000000</span>
+        <div id="game-id-box">
+            Game Id: <span id=game-id>000000</span>
         </div>
+
+        <button id="start-game-btn">Start Game</button>
     </div>
 
 
@@ -36,4 +41,5 @@
     <script src="mapPage.js"></script>
 
 </body>
+
 </html>
