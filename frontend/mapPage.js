@@ -42,3 +42,9 @@ navigator.geolocation.watchPosition(
 L.circle([43.47032, -80.54232], {
     radius: 20
 }).addTo(map);
+
+const Start_btn = document.querySelector("#start-btn");
+
+Start_btn.addEventListener("click", ()=>{
+    
+});
