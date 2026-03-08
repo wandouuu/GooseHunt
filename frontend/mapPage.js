@@ -1,10 +1,13 @@
-// Read IDs from sessionStorage (set by Lobby.js)
-const GameId = sessionStorage.getItem("GameId");
-const PlayerId = sessionStorage.getItem("PlayerId");
-
 const socket = new WebSocket(`ws://localhost:8000/ws/game/${GameId}/${PlayerId}`);
 
-let circle;
+
+// THIS NEEDS VARS:
+// gameState = true for game still going, false for game over
+// playerId
+// gameId
+//centerLat
+// centerLon
+//role
 
 
 
@@ -16,28 +19,13 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// Check if game already started (redirected from Lobby)
-const gameStartData = sessionStorage.getItem("gameStartData");
-if (gameStartData) {
-    const startData = JSON.parse(gameStartData);
-    circle = L.circle([startData.center_lat, startData.center_lon], {
-        radius: startData.radius
-    }).addTo(map);
-    document.getElementById("player-role").innerText = startData.roles[PlayerId] === 0 ? "Seeker" : "Hider";
-    document.getElementById("start-game-btn").style.display = "none";
-    sessionStorage.removeItem("gameStartData");
-}
 
 //draws circle
 
-<<<<<<< HEAD
 // REPLACE WITH centerLat, centerLon
 let circle = L.circle([centerLat, centerLon], {
-radius: 400
+    radius: 400
 }).addTo(map);
-=======
-
->>>>>>> feature/frontend-connections
 
 // UI
 // if(role == "Seeker"){
@@ -197,8 +185,11 @@ async function leaveGame() {
 // POST /api/game_state/caught/{game_id}/{player_id}
 document.getElementById("caught-btn").addEventListener("click", async () => {
     try {
-        const response = await fetch(`http://localhost:8000/api/game_state/caught/${GameId}/${PlayerId}`, {
-            method: "POST"
+        const response = await fetch(`http://localhost:8000/game_state/caught?game_id=${GameId}&player_id=${PlayerId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
         });
 
         if (!response.ok) {
@@ -213,11 +204,6 @@ document.getElementById("caught-btn").addEventListener("click", async () => {
     } catch (error) {
         console.error("Error sending caught status:", error);
     }
-<<<<<<< HEAD
 
-    
-});
-=======
-});
 
->>>>>>> feature/frontend-connections
+});
