@@ -1,8 +1,8 @@
 import random
 import math
-from player import Player
+from app.game.player import Player
 import time 
-import spatial_logic
+from app.game.spatial_logic import is_outside_boundary
 
 class Game:
     def __init__(self, game_id, center_lat, center_lon, player_id, player_name):
@@ -19,22 +19,22 @@ class Game:
         
 
     def add_player(self, player_id, player_name, lat, lon):
-        if(( not self.game_started) and (self.players.len() < self.max_players)):
+        if(( not self.game_started) and (len(self.players) < self.max_players)):
             player = Player(player_id, player_name, lat, lon)
             self.players[player_id] = player
     
     def assign_roles(self):
-        num_seekers = max(1, math.ceil(0.1 * self.players.len()))
+        num_seekers = max(1, math.ceil(0.1 * len(self.players)))
         
-        seekers = random.sample(self.players, num_seekers)
+        seekers = random.sample(list(self.players.keys()), num_seekers)
 
-        for player in self.players:
-            if player in seekers:
+        for player_id in self.players:
+            if player_id in seekers:
                 # role = 0 for seeker
-                player.role = 0
+                self.players[player_id].role = 0
             else:
                 # role = 1 for hider
-                player.role = 1
+                self.players[player_id].role = 1
 
     def shrink_zone(self):
         self.radius = self.radius * 0.75
@@ -74,7 +74,7 @@ class Game:
 
         counter = 0
         for i in range(5):
-            if spatial_logic.is_outside_boundary(player.lat[i], player.lon[i], self.center_lat, self.center_lon, self.radius):
+            if is_outside_boundary(player.lat[i], player.lon[i], self.center_lat, self.center_lon, self.radius):
                 counter += 1
             else:
                 await self.broadcast({"query": "game_state", "game_state": "game_on"})
